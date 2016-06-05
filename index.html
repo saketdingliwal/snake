@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>GAME</title>
+</head>
+<body>
+	<canvas id="myCanvas" width="580" height="580"></canvas>
+	<script  type="text/javascript">
+		var canvas = document.getElementById('myCanvas');
+		var context = canvas.getContext('2d');
+		context.beginPath();
+		context.rect(0,0,canvas.width,canvas.height);
+		context.stroke(); // do not fill and just draw the boundary
+		context.closePath();
+		
+
+		
+
+		var counter=0;
+		bird=
+		{x:canvas.width/2,y:canvas.height/2,rad:20};
+		block={x:1,y:1,h:40,w:40,vx:0,vy:0};
+		
+		exblock = [];
+
+		repeat();
+
+document.onkeydown = function(e) {
+    switch (e.keyCode) {
+        case 38:
+            block.vy=-1.25;
+            block.vx=0;
+            break;
+
+        case 37:
+            block.vx=-1.25;
+            block.vy=0;
+            break;
+
+        case 40:
+            block.vy=1.25;
+            block.vx=0;
+            break;
+
+        case 39:
+            block.vy=0;
+            block.vx=1.25;
+            break;
+            }};  
+
+
+		function repeat()
+		{
+			context.clearRect(1,1,canvas.width-2,canvas.height-2);
+			context.beginPath(); // drawing the main circle
+			context.rect(block.x,block.y,block.w,block.h);
+			context.fillStyle = "#FF0000"; // setting colour
+			context.fill();
+			context.closePath();
+
+			for(var i=0;i<counter;i++)
+			{	
+				
+
+				context.beginPath(); // drawing the main circle
+				context.rect(exblock[i].x,exblock[i].y,exblock[i].w,exblock[i].h);
+				context.fillStyle = "#FF0000"; // setting colour
+				context.fill();
+				context.closePath();
+			}
+
+
+			block.x+=block.vx;
+			block.y+=block.vy;
+			if(counter>0)
+			{
+			exblock[0].x+=exblock[0].vx;
+			exblock[0].y+=exblock[0].vy;
+			}
+
+			for(var i=1;i<counter;i++)
+            {	
+            	exblock[i].x+=exblock[i].vx;
+				exblock[i].y+=exblock[i].vy;
+
+            	if((((exblock[i].x-exblock[i-1].x==exblock[i].w) && (exblock[i].y-exblock[i-1].y==0)  && (exblock[i].vx==0) ) || ((exblock[i-1].x-exblock[i].x==exblock[i].w) && (exblock[i].y-exblock[i-1].y==0) && (exblock[i].vx==0) ) || ((exblock[i].y-exblock[i-1].y==exblock[i].h) && (exblock[i].x-exblock[i-1].x==0) && (exblock[i].vy==0) ) || ((exblock[i-1].y-exblock[i].y==exblock[i].h) && (exblock[i].x-exblock[i-1].x==0) && (exblock[i].vy==0) )    ))
+            	{	
+            		exblock[i].vx=exblock[i-1].vx;
+            		exblock[i].vy=exblock[i-1].vy;
+            		
+            	}
+            	
+            }
+			
+			if(counter>0)
+			{
+				
+				if((((exblock[0].x-block.x==exblock[0].w) && (exblock[0].y-block.y==0)) || ((block.x-exblock[0].x==exblock[0].w) && (exblock[0].y-block.y==0)) || ((block.y-exblock[0].y==exblock[0].h) && (exblock[0].x-block.x==0)) || ((exblock[0].y-block.y==exblock[0].h) && (exblock[0].x-block.x==0))    ))
+            	{
+            		exblock[0].vx=block.vx;
+            		exblock[0].vy=block.vy;
+            	}
+			}
+
+
+
+			context.beginPath(); // drawing the main circle
+            context.arc(bird.x,bird.y,bird.rad,0,2*Math.PI,true);
+            context.fillStyle = "#F215F2"; // setting colour
+            context.fill();
+            context.closePath();
+            
+			
+           
+
+
+
+            if(((block.y+block.h>bird.y-bird.rad && block.y+block.h<bird.y+bird.rad ) || (block.y>bird.y-bird.rad && block.y<bird.y+bird.rad)) && ((block.x>bird.x-bird.rad && block.x<bird.x+bird.rad) || (block.x+block.w>bird.x-bird.rad && block.x+block.w<bird.x+bird.rad)))
+            {	
+            	
+            	bird.x=Math.random()*canvas.width;
+            	if(bird.x<30){bird.x+=30;}
+            	if(bird.x>canvas.width-30){bird.x-=30;}
+            	bird.y=Math.random()*canvas.height;
+            	if(bird.y<30){bird.y+=30;}
+            	if(bird.y>canvas.height-30){bird.y-=30;}
+            	counter++;
+            	exbloc={x:1,y:1,h:40,w:40,vx:0,vy:0};
+            	exblock.push(exbloc);
+            	if(counter>1)
+            	{
+            	if(exblock[counter-2].vx>0)
+            	{
+            		exblock[counter-1].x=exblock[counter-2].x-exblock[counter-1].w;
+            		exblock[counter-1].y=exblock[counter-2].y;
+            	}
+            	else if(exblock[counter-2].vx<0)
+            	{
+            		exblock[counter-1].x=exblock[counter-2].x+exblock[counter-1].w;
+            		exblock[counter-1].y=exblock[counter-2].y;
+            	}
+            	else if(exblock[counter-2].vy>0)
+            	{	
+            		exblock[counter-1].y=exblock[counter-2].y-exblock[counter-1].h;
+            		exblock[counter-1].x=exblock[counter-2].x;
+            		
+            	}
+            	else if(exblock[counter-2].vy<0)
+            	{
+            		exblock[counter-1].y=exblock[counter-2].y+exblock[counter-1].h;
+            		exblock[counter-1].x=exblock[counter-2].x;
+            	}
+            	exblock[counter-1].vx=exblock[counter-2].vx;
+            	exblock[counter-1].vy=exblock[counter-2].vy;
+
+            	}
+            if(counter==1)
+            {
+            	if(block.vx>0)
+            	{
+            		exblock[counter-1].x=block.x-exblock[counter-1].w;
+            		exblock[counter-1].y=block.y;
+            	}
+            	else if(block.vx<0)
+            	{
+            		exblock[counter-1].x=block.x+exblock[counter-1].w;
+            		exblock[counter-1].y=block.y;
+            	}
+            	else if(block.vy>0)
+            	{
+            		exblock[counter-1].y=block.y-exblock[counter-1].h;
+            		exblock[counter-1].x=block.x;
+            	}
+            	else if(block.vy<0)
+            	{
+            		exblock[counter-1].y=block.y+exblock[counter-1].h;
+            		exblock[counter-1].x=block.x;
+            	}
+            	exblock[0].vx=block.vx;
+            	exblock[0].vy=block.vy;
+
+
+            }
+
+
+        	}
+        	
+			 
+
+
+
+			if(block.x<0 || block.x+block.w>canvas.width || block.y<0 || block.y+block.h>canvas.height)
+			{
+				alert("game over! the score is  " + counter);
+				
+				repeat.stop();
+			}
+			context.font = "60px Arial";
+			context.fillText(counter,canvas.width-80,60);
+
+			animate = setTimeout(repeat,1000/120);
+		}
+
+
+	</script>
+</body>
+</html>
